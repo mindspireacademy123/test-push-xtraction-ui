@@ -1,5 +1,3 @@
-<div align="center">
-
 # 📄 Xtraction — Frontend
 
 **The intelligent document platform that brings your files to life.**
@@ -13,9 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Version](https://img.shields.io/badge/version-2.10.3-blue)](./CHANGELOG.md)
 
-[Live App](https://unraveldocs.xyz) · [Changelog](./CHANGELOG.md) · [Contributing](./.github/CONTRIBUTING.md)
-
-</div>
+[Live App](https://xtraction.brintsgroup.xyz) · [Changelog](./CHANGELOG.md) · [Contributing](./.github/CONTRIBUTING.md)
 
 ---
 
