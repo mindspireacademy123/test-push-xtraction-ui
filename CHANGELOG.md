@@ -1,3 +1,5 @@
+## [2.10.5](https://github.com/Brints/xtraction-ui/compare/v2.10.4...v2.10.5) (2026-07-06)
+
 ## [2.10.4](https://github.com/Brints/xtraction-ui/compare/v2.10.3...v2.10.4) (2026-07-06)
 
 ## [2.10.3](https://github.com/Brints/unraveldocs-frontend/compare/v2.10.2...v2.10.3) (2026-03-18)
