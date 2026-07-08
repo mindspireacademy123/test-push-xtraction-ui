@@ -1,3 +1,10 @@
+# [2.11.0](https://github.com/Brints/xtraction-ui/compare/v2.10.5...v2.11.0) (2026-07-08)
+
+
+### Features
+
+* rebrand to Xtraction, modularize features, and configure path aliases ([4f7a05c](https://github.com/Brints/xtraction-ui/commit/4f7a05c865e725894e77999d61db6e0e08a42030))
+
 ## [2.10.3](https://github.com/Brints/xtraction-frontend/compare/v2.10.2...v2.10.3) (2026-03-18)
 
 ## [2.10.2](https://github.com/Brints/xtraction-frontend/compare/v2.10.1...v2.10.2) (2026-03-15)
