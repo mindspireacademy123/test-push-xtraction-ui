@@ -18,7 +18,7 @@ export class Logo {
   @Input() theme: LogoTheme = 'light';
   @Input() showTagline: boolean = false;
 
-  readonly tagline = 'Unlock Your Text. Edit Anything.';
+  readonly tagline = 'Smart Document Extraction. Extract Anything.';
 
   get iconSize(): { width: number; height: number } {
     const sizes = {

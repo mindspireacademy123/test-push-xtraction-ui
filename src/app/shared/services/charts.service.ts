@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
-import { ChartData } from '../components/charts/line-chart/line-chart.component';
-import { DonutChartData } from '../components/charts/donut-chart/donut-chart.component';
-import { BarChartData } from '../components/charts/bar-chart/bar-chart.component';
-import {AreaChartData} from '../components/charts/area-chart/data';
+import { ChartData } from '@shared/components/charts/line-chart/line-chart.component';
+import { DonutChartData } from '@shared/components/charts/donut-chart/donut-chart.component';
+import { BarChartData } from '@shared/components/charts/bar-chart/bar-chart.component';
+import {AreaChartData} from '@shared/components/charts/area-chart/data';
 
 export interface ChartDataSets {
   userGrowth: ChartData;

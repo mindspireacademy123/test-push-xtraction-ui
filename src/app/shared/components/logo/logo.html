@@ -1,23 +1,21 @@
 <div class="logo-container" [class.logo-dark]="theme === 'dark'">
-  @if (variant === 'icon') {
-    <img
-      src="assets/logo.svg"
-      alt="UnravelDocs"
-      class="logo-image logo-image-icon"
-      [style.width.px]="iconSize.width"
-      [style.height.px]="iconSize.height"
-    />
+  <!-- Icon or Full variant: render the monogram icon -->
+  @if (variant === 'icon' || variant === 'full') {
+    <div class="logo-icon-wrapper" [style.width.px]="iconSize.width" [style.height.px]="iconSize.height">
+      <img
+        src="assets/logo.png"
+        alt="Xtraction"
+        class="logo-png-image-icon"
+      />
+    </div>
   }
 
+  <!-- Full or Text variant: render the brand name text -->
   @if (variant === 'full' || variant === 'text') {
-    <div class="logo-text-container">
-      <img
-        src="assets/logo.svg"
-        alt="UnravelDocs"
-        class="logo-image"
-        [style.width.px]="fullLogoSize.width"
-        [style.height.px]="fullLogoSize.height"
-      />
+    <div class="logo-text-container" [class.ml-3]="variant === 'full'">
+      <span class="logo-png-text" [ngClass]="textClass">
+        <span class="text-indigo-600 font-extrabold">X</span>traction
+      </span>
       @if (showTagline) {
         <span class="logo-tagline" [ngClass]="taglineClass">
           {{ tagline }}

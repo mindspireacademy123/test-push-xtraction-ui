@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "unraveldocs-frontend": {
+    "xtraction-ui": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/unraveldocs-frontend",
+            "outputPath": "dist/xtraction-ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -82,10 +82,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "unraveldocs-frontend:build:production"
+              "buildTarget": "xtraction-ui:build:production"
             },
             "development": {
-              "buildTarget": "unraveldocs-frontend:build:development"
+              "buildTarget": "xtraction-ui:build:development"
             }
           },
           "defaultConfiguration": "development"

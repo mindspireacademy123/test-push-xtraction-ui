@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import {
   SearchRequest,
   SearchResponse,
   SearchResult,
-} from '../models/search.model';
+} from '@shared/models/search.model';
 
 @Injectable({
   providedIn: 'root'

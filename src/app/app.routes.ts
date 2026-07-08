@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { LandingComponent } from './features/landing-page/components/landing.component';
-import { authGuard } from './core/auth/guards/auth.guard';
+import { LandingComponent } from '@features/public/landing-page/components/landing.component';
+import { authGuard } from '@core/auth/guards/auth.guard';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -8,65 +9,59 @@ export const routes: Routes = [
   // Backward-compatible redirects for old /dashboard paths
   { path: 'dashboard', redirectTo: '/user/dashboard', pathMatch: 'full' },
   { path: 'settings', redirectTo: '/user/settings', pathMatch: 'prefix' },
-  // {
-  //   path: 'pricing',
-  //   loadComponent: () => import(
-  //     './pages/pricing/pricing-page.component').then(m => m.PricingPageComponent),
-  //   title: 'Pricing - UnravelDocs'
-  // },
   {
     path: 'auth',
-    loadChildren: () => import('./core/auth/auth.routes').then(m => m.authRoutes)
+    loadChildren: () => import('@core/auth/auth.routes').then(m => m.authRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/privacy/privacy.routes').then(m => m.privacyRoutes)
+    loadChildren: () => import('@features/public/privacy/privacy.routes').then(m => m.privacyRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/user/user.routes').then(m => m.userRoutes)
+    loadChildren: () => import('@features/portal/user/user.routes').then(m => m.userRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/documents/documents.routes').then(m => m.documentRoutes)
+    loadChildren: () => import('@features/document-processing/management/documents.routes').then(m => m.documentRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/ocr/ocr.routes').then(m => m.ocrRoutes)
+    loadChildren: () => import('@features/document-processing/ocr/ocr.routes').then(m => m.ocrRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/subscription/subscription.routes').then(m => m.subscriptionRoutes)
+    loadChildren: () => import('@features/billing/subscription/subscription.routes').then(m => m.subscriptionRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/payments/payments.routes').then(m => m.paymentRoutes)
+    loadChildren: () => import('@features/billing/payments/payments.routes').then(m => m.paymentRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/credits/credits.routes').then(m => m.creditRoutes)
+    loadChildren: () => import('@features/billing/credits/credits.routes').then(m => m.creditRoutes)
   },
   {
     path: '',
-    loadChildren: () => import('./features/teams/teams.routes').then(m => m.teamRoutes)
+    loadChildren: () => import('@features/portal/teams/teams.routes').then(m => m.teamRoutes)
   },
   {
     path: 'search',
-    loadComponent: () => import('./features/user/components/dashboard-layout/dashboard-layout.component')
+    loadComponent: () => import('@features/portal/user/components/dashboard-layout/dashboard-layout.component')
       .then(m => m.DashboardLayoutComponent),
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        loadComponent: () => import('./shared/components/search/search.component')
+        loadComponent: () => import('@shared/components/search/search.component')
           .then(m => m.SearchComponent),
-        title: 'Search - UnravelDocs'
+        title: 'Search - Xtraction'
       }
     ]
   },
   {
     path: 'notifications',
-    loadChildren: () => import('./features/notifications/notifications.routes').then(m => m.notificationRoutes),
+    loadChildren: () => import('@features/portal/notifications/notifications.routes').then(m => m.notificationRoutes),
     canActivate: [authGuard]
   },
   { path: '**', redirectTo: '/home' }

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import {Testimonials} from './testimonials';
+import {Testimonials} from '@shared/components/testimonials/testimonials';
 
 interface Testimonial {
   id: string;

@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../../core/auth/services/auth.service';
-import { Logo } from '../../logo/logo';
-import { ProfileDropdownComponent } from '../../profile-dropdown/profile-dropdown.component';
+import { AuthService } from '@core/auth/services/auth.service';
+import { Logo } from '@shared/components/logo/logo';
+import { ProfileDropdownComponent } from '@shared/components/profile-dropdown/profile-dropdown.component';
 
 @Component({
   selector: 'app-header',

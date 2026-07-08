@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { Logo } from '../../logo/logo';
+import { Logo } from '@shared/components/logo/logo';
 
 
 @Component({

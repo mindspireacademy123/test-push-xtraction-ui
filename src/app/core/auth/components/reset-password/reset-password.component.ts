@@ -1,8 +1,8 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { PasswordResetConfirm, AuthError, AuthErrorCodes } from '../../models/auth.model';
+import { AuthService } from '@core/auth/services/auth.service';
+import { PasswordResetConfirm, AuthError, AuthErrorCodes } from '@core/auth/models/auth.model';
 
 interface ResetPasswordState {
   isLoading: boolean;

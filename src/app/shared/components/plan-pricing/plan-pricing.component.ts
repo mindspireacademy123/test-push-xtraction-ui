@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { PricingService } from '../../services/pricing.service';
-import { Currency } from '../../models/pricing.model';
+import { PricingService } from '@shared/services/pricing.service';
+import { Currency } from '@shared/models/pricing.model';
 
 @Component({
   selector: 'app-plan-pricing',

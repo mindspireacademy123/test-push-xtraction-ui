@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { PricingService } from './pricing.service';
-import { environment } from '../../../environments/environment';
-import { PlansResponse, CurrenciesResponse } from '../models/pricing.model';
+import { PricingService } from '@shared/services/pricing.service';
+import { environment } from 'src/environments/environment';
+import { PlansResponse, CurrenciesResponse } from '@shared/models/pricing.model';
 
 describe('PricingService', () => {
   let service: PricingService;

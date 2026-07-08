@@ -104,8 +104,8 @@ Ensure the following tools are installed before you start:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Brints/unraveldocs-frontend.git
-cd unraveldocs-frontend
+git clone https://github.com/Brints/xtraction-frontend.git
+cd xtraction-frontend
 ```
 
 ### 2. Install dependencies
@@ -255,7 +255,7 @@ pnpm start              # Start dev server on http://localhost:4200
 pnpm run watch          # Build in watch mode (development config)
 
 # ─── Build ─────────────────────────────────────────────────
-pnpm run build          # Production build → dist/unraveldocs-frontend/
+pnpm run build          # Production build → dist/xtraction-frontend/
 
 # ─── Testing ───────────────────────────────────────────────
 pnpm test               # Run unit tests (interactive / watch mode)
@@ -296,7 +296,7 @@ export const environment = {
 ```typescript
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.unraveldocs.xyz',
+  apiBaseUrl: 'https://api.xtraction.brintsgroup.xyz',
   firebaseConfig: { /* your Firebase config */ },
 };
 ```
@@ -310,13 +310,13 @@ export const environment = {
 ### Build the Docker image locally
 
 ```bash
-docker build -t unraveldocs-frontend:local .
+docker build -t xtraction-frontend:local .
 ```
 
 ### Run the container locally
 
 ```bash
-docker run -p 8080:80 unraveldocs-frontend:local
+docker run -p 8080:80 xtraction-frontend:local
 # Open http://localhost:8080
 ```
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TokenRefreshService } from './core/auth/services/token-refresh.service';
-import { AuthService } from './core/auth/services/auth.service';
+import { TokenRefreshService } from '@core/auth/services/token-refresh.service';
+import { AuthService } from '@core/auth/services/auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
   styleUrl: 'app.component.css',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'UnravelDocs - Unlock Your Text. Edit Anything.';
+  title = 'Xtraction - Smart Document Extraction. Extract Anything.';
 
   private readonly tokenRefreshService = inject(TokenRefreshService);
   private readonly authService = inject(AuthService);

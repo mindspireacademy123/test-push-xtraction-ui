@@ -1,13 +1,13 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import {
   Currency,
   CurrenciesResponse,
   PlansResponse,
   POPULAR_CURRENCIES
-} from '../models/pricing.model';
+} from '@shared/models/pricing.model';
 
 @Injectable({
   providedIn: 'root'

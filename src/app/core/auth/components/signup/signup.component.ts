@@ -6,24 +6,24 @@ import {
   FormControl,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { AuthError, AuthErrorCodes } from '../../models/auth.model';
-import { GoogleSignupComponent } from '../google-signup/google-signup.component';
+import { AuthService } from '@core/auth/services/auth.service';
+import { AuthError, AuthErrorCodes } from '@core/auth/models/auth.model';
+import { GoogleSignupComponent } from '@core/auth/components/google-signup/google-signup.component';
 import {
   GoogleSignupResponse,
   GoogleAuthError,
-} from '../../models/google-auth.model';
-import {FooterComponent} from '../../../../shared/components/navbar/footer/footer.component';
-import {PasswordGeneratorComponent} from '../../../../shared/ui/password-generator/password-generator.component';
-import {ButtonComponent} from '../../../../shared/ui/button/button.component';
-import {FormInputComponent} from '../../../../shared/ui/form-input/form-input.component';
-import {FormSelectComponent} from '../../../../shared/ui/form-select/form-select.component';
-import {PasswordStrengthComponent} from '../../../../shared/ui/password-strength/password-strength.component';
-import {Logo} from '../../../../shared/components/logo/logo';
-import {environment} from '../../../../../environments/environment';
-import {CustomValidators} from '../../../../shared/validators/custom-validators';
-import {Professions} from '../../../../shared/ui/form-select/data/professions';
-import {Countries, Country} from '../../../../shared/ui/form-select/data/countries';
+} from '@core/auth/models/google-auth.model';
+import {FooterComponent} from '@shared/components/navbar/footer/footer.component';
+import {PasswordGeneratorComponent} from '@shared/ui/password-generator/password-generator.component';
+import {ButtonComponent} from '@shared/ui/button/button.component';
+import {FormInputComponent} from '@shared/ui/form-input/form-input.component';
+import {FormSelectComponent} from '@shared/ui/form-select/form-select.component';
+import {PasswordStrengthComponent} from '@shared/ui/password-strength/password-strength.component';
+import {Logo} from '@shared/components/logo/logo';
+import {environment} from 'src/environments/environment';
+import {CustomValidators} from '@shared/validators/custom-validators';
+import {Professions} from '@shared/ui/form-select/data/professions';
+import {Countries, Country} from '@shared/ui/form-select/data/countries';
 
 interface SignupFormData {
   firstName: string;

@@ -2,9 +2,9 @@ import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SearchStateService } from '../../services/search-state.service';
-import { SearchResult, SORT_OPTIONS, PAGE_SIZE_OPTIONS } from '../../models/search.model';
-import { DocumentViewerComponent } from '../document-viewer/document-viewer.component';
+import { SearchStateService } from '@shared/services/search-state.service';
+import { SearchResult, SORT_OPTIONS, PAGE_SIZE_OPTIONS } from '@shared/models/search.model';
+import { DocumentViewerComponent } from '@shared/components/document-viewer/document-viewer.component';
 
 @Component({
   selector: 'app-search',

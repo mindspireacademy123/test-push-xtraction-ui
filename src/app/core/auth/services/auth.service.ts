@@ -16,8 +16,8 @@ import {
   RefreshTokenData,
   SignupRequest,
   User,
-} from '../models/auth.model';
-import {environment} from '../../../../environments/environment';
+} from '@core/auth/models/auth.model';
+import {environment} from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',

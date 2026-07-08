@@ -20,7 +20,7 @@ self.addEventListener('push', (event) => {
   console.log('[Service Worker] Push received:', event);
 
   let notificationData = {
-    title: 'UnravelDocs',
+    title: 'Xtraction',
     body: 'You have a new notification',
     icon: '/assets/logo.svg',
     badge: '/assets/logo.svg',

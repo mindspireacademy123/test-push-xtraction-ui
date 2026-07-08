@@ -1,0 +1,152 @@
+<!-- Dashboard Layout with Sidebar -->
+<div class="dashboard-layout" [class.sidebar-collapsed]="sidebarCollapsed()">
+
+  <!-- Mobile Overlay -->
+  @if (sidebarMobileOpen()) {
+  <div class="mobile-overlay" (click)="closeMobileSidebar()" (keydown.escape)="closeMobileSidebar()">
+  </div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed()" [class.mobile-open]="sidebarMobileOpen()">
+
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+      <a routerLink="/user/dashboard" class="logo-link">
+        <app-logo [variant]="sidebarCollapsed() ? 'icon' : 'full'" size="md" theme="light"></app-logo>
+      </a>
+
+      <!-- Mobile Close Button -->
+      @if (isMobile()) {
+      <button type="button" class="mobile-close-btn" (click)="closeMobileSidebar()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      }
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <!-- Main Navigation -->
+      <div class="nav-section">
+        @if (!sidebarCollapsed()) {
+        <span class="nav-section-title">Main Menu</span>
+        }
+        <ul class="nav-list">
+          @for (item of mainNavItems(); track item.id) {
+          <li class="nav-item">
+            <a [routerLink]="item.route" class="nav-link" [class.active]="isRouteActive(item.route)"
+              [title]="sidebarCollapsed() ? item.label : ''">
+              <span class="nav-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.iconPath" />
+                </svg>
+              </span>
+              @if (!sidebarCollapsed()) {
+              <span class="nav-label">{{ item.label }}</span>
+              @if (item.badge) {
+              <span class="nav-badge">{{ item.badge }}</span>
+              }
+              }
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Settings Navigation -->
+      <div class="nav-section">
+        @if (!sidebarCollapsed()) {
+        <span class="nav-section-title">Settings</span>
+        }
+        <ul class="nav-list">
+          @for (item of settingsNavItems(); track item.id) {
+          <li class="nav-item">
+            <a [routerLink]="item.route" class="nav-link" [class.active]="isRouteActive(item.route)"
+              [title]="sidebarCollapsed() ? item.label : ''">
+              <span class="nav-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.iconPath" />
+                </svg>
+              </span>
+              @if (!sidebarCollapsed()) {
+              <span class="nav-label">{{ item.label }}</span>
+              }
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Sidebar Footer - Collapse Toggle -->
+    @if (!isMobile()) {
+    <div class="sidebar-footer">
+      <button type="button" class="collapse-btn" (click)="toggleSidebar()"
+        [title]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
+        <svg class="w-5 h-5 transition-transform duration-300" [class.rotate-180]="sidebarCollapsed()" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+        </svg>
+      </button>
+    </div>
+    }
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <!-- Mobile Menu Button -->
+        <button type="button" class="mobile-menu-btn" (click)="toggleSidebar()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" class="search-input" placeholder="Search documents, collections..." />
+            <kbd class="search-shortcut">⌘K</kbd>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Notifications -->
+        <app-notification-bell></app-notification-bell>
+
+        <!-- User Menu (Reusable Profile Dropdown) -->
+        <app-profile-dropdown [user]="{
+            profilePicture: profile()?.profilePicture,
+            firstName: profile()?.firstName,
+            lastName: profile()?.lastName,
+            email: profile()?.email
+          }">
+        </app-profile-dropdown>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <p>&copy; {{ currentYear() }} Xtraction. All rights reserved.</p>
+      <div class="footer-links">
+        <a routerLink="/privacy">Privacy</a>
+        <a routerLink="/terms">Terms</a>
+        <a href="mailto:support@xtraction.brintsgroup.xyz">Support</a>
+      </div>
+    </footer>
+  </div>
+</div>
