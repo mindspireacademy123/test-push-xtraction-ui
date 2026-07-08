@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '@core/auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root'

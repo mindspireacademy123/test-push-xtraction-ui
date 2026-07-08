@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" role="img" aria-labelledby="title desc">
+  <title id="title">Xtraction Logo</title>
+  <desc id="desc">Gradient geometric interlocking X monogram with white Xtraction wordmark.</desc>
+
+  <defs>
+    <!-- Indigo-Violet gradient -->
+    <linearGradient id="indigo-violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    
+    <!-- Cyan-Teal gradient -->
+    <linearGradient id="cyan-teal" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+
+    <!-- Neon Glow Filter -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Graphical Monogram -->
+  <g transform="translate(18,18)">
+    <!-- 1. Top-Right part of Cyan Loop (rendered under Purple loop) -->
+    <path d="M 72 56 L 100 28 A 12 12 0 0 1 108 44 L 80 72" fill="none" stroke="url(#cyan-teal)" stroke-width="13" stroke-linecap="round"/>
+    
+    <!-- 2. Continuous Purple Loop (rendered on top of top-right Cyan, but under bottom-left Cyan) -->
+    <path d="M 44 28 L 100 84 A 12 12 0 0 1 92 100 L 36 44 A 12 12 0 0 1 44 28 Z" fill="none" stroke="url(#indigo-violet)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    
+    <!-- 3. Bottom-Left part of Cyan Loop (rendered on top of Purple loop to complete the 3D weave) -->
+    <path d="M 80 72 L 52 100 A 12 12 0 0 1 44 84 L 72 56" fill="none" stroke="url(#cyan-teal)" stroke-width="13" stroke-linecap="round" filter="url(#glow)"/>
+  </g>
+
+  <!-- Wordmark (White Text for Dark backgrounds) -->
+  <g transform="translate(192,38)">
+    <text x="0" y="64"
+          font-family="Inter, Segoe UI, Arial, sans-serif"
+          font-size="68"
+          font-weight="800"
+          letter-spacing="-1.2"
+          fill="#ffffff">
+      <tspan fill="#4f46e5">X</tspan>traction
+    </text>
+    <text x="2" y="102"
+          font-family="Inter, Segoe UI, Arial, sans-serif"
+          font-size="18"
+          font-weight="500"
+          fill="#e2e8f0">
+      Smart Document Extraction. Extract Anything.
+    </text>
+  </g>
+</svg>

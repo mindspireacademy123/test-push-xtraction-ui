@@ -4,14 +4,14 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormControl } from '@angu
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { AuthService } from '../../services/auth.service';
-import { GoogleAuthService } from '../../services/google-auth.service';
-import { GoogleSignupComponent } from '../google-signup/google-signup.component';
+import { AuthService } from '@core/auth/services/auth.service';
+import { GoogleAuthService } from '@core/auth/services/google-auth.service';
+import { GoogleSignupComponent } from '@core/auth/components/google-signup/google-signup.component';
 
 import {
   GoogleSignupResponse,
   GoogleAuthError
-} from '../../models/google-auth.model';
+} from '@core/auth/models/google-auth.model';
 import {
   AuthError,
   AuthErrorCodes,
@@ -19,12 +19,12 @@ import {
   LoginRequest,
   LoginError,
   LoginErrorCodes
-} from '../../models/auth.model';
-import {FooterComponent} from '../../../../shared/components/navbar/footer/footer.component';
-import {FormInputComponent} from '../../../../shared/ui/form-input/form-input.component';
-import {ButtonComponent} from '../../../../shared/ui/button/button.component';
-import {Logo} from '../../../../shared/components/logo/logo';
-import {environment} from '../../../../../environments/environment';
+} from '@core/auth/models/auth.model';
+import {FooterComponent} from '@shared/components/navbar/footer/footer.component';
+import {FormInputComponent} from '@shared/ui/form-input/form-input.component';
+import {ButtonComponent} from '@shared/ui/button/button.component';
+import {Logo} from '@shared/components/logo/logo';
+import {environment} from 'src/environments/environment';
 
 interface LoginFormData {
   email: string;

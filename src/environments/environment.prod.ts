@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.unraveldocs.xyz/api/v1',
+  apiUrl: 'https://api.xtraction.brintsgroup.xyz/api/v1',
   google: {
     clientId: '958289823754-fleftud0m3c522auk29usajuvf6rom3k.apps.googleusercontent.com',
-    redirectUri: 'https://unraveldocs.xyz/login/oauth2/code/google',
+    redirectUri: 'https://xtraction.brintsgroup.xyz/login/oauth2/code/google',
     scopes: [
       'openid',
       'email',

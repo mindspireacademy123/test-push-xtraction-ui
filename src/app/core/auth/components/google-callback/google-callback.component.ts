@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { GoogleAuthService } from '../../services/google-auth.service';
-import { GoogleSignupResponse, GoogleAuthError } from '../../models/google-auth.model';
+import { GoogleAuthService } from '@core/auth/services/google-auth.service';
+import { GoogleSignupResponse, GoogleAuthError } from '@core/auth/models/google-auth.model';
 
 @Component({
   selector: 'app-google-callback',

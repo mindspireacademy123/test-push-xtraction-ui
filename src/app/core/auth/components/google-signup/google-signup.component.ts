@@ -4,15 +4,15 @@ import { FormBuilder, ReactiveFormsModule, Validators, FormControl } from '@angu
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { GoogleAuthService } from '../../services/google-auth.service';
+import { GoogleAuthService } from '@core/auth/services/google-auth.service';
 import {
   GoogleSignupResponse,
   GoogleAuthError,
   GoogleAuthErrorCodes,
   GoogleAuthConfig
-} from '../../models/google-auth.model';
-import {ButtonComponent} from '../../../../shared/ui/button/button.component';
-import {FormInputComponent} from '../../../../shared/ui/form-input/form-input.component';
+} from '@core/auth/models/google-auth.model';
+import {ButtonComponent} from '@shared/ui/button/button.component';
+import {FormInputComponent} from '@shared/ui/form-input/form-input.component';
 
 export interface GoogleSignupConfig {
   showMarketingConsent?: boolean;

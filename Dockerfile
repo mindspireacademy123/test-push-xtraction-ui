@@ -32,7 +32,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built Angular app from build stage
-COPY --from=build /app/dist/unraveldocs-frontend/browser /usr/share/nginx/html
+COPY --from=build /app/dist/xtraction-ui/browser /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80

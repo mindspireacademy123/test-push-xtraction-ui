@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { catchError, of, tap, finalize, debounceTime, Subject, switchMap } from 'rxjs';
-import { SearchService } from './search.service';
+import { SearchService } from '@shared/services/search.service';
 import {
   SearchRequest,
   SearchResponse,
@@ -8,7 +8,7 @@ import {
   SearchFilters,
   DEFAULT_PAGE_SIZE,
   PAGE_SIZE_OPTIONS,
-} from '../models/search.model';
+} from '@shared/models/search.model';
 
 @Injectable({
   providedIn: 'root'

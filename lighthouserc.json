@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./dist/unraveldocs-frontend/browser",
+      "staticDistDir": "./dist/xtraction-ui/browser",
       "numberOfRuns": 3
     },
     "assert": {

@@ -1,0 +1,654 @@
+import { Component, inject, OnInit, signal, computed, HostListener } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { OcrStateService } from '@features/document-processing/ocr/services/ocr-state.service';
+import { AiStateService } from '@features/document-processing/ai/services/ai-state.service';
+import { OcrJob, OcrStatus, OcrData, SUPPORTED_LANGUAGES, PageSelectionOptions, ContentFormat } from '@features/document-processing/ocr/models/ocr.model';
+import { SummaryType } from '@features/document-processing/ai/models/ai.model';
+import { RichTextEditorComponent } from '@shared/components/rich-text-editor/rich-text-editor.component';
+import { DatePickerComponent } from '@shared/components/date-picker/date-picker.component';
+import { SafeHtmlPipe } from '@shared/pipes/safe-html.pipe';
+
+@Component({
+  selector: 'app-ocr-processing',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, RichTextEditorComponent, DatePickerComponent, SafeHtmlPipe],
+  templateUrl: './ocr-processing.component.html',
+  styleUrls: ['./ocr-processing.component.css']
+})
+export class OcrProcessingComponent implements OnInit {
+  protected readonly ocrState = inject(OcrStateService);
+  protected readonly aiState = inject(AiStateService);
+
+  // Local state
+  isDragOver = signal(false);
+  activeTab = signal<'all' | 'processing' | 'completed' | 'failed'>('all');
+  showUploadModal = signal(false);
+  selectedFiles = signal<File[]>([]);
+  showResultModal = signal(false);
+
+  // OCR data loaded from API for result modal
+  ocrData = signal<OcrData | null>(null);
+  ocrDataLoading = signal(false);
+  ocrViewTab = signal<'extracted' | 'edited'>('extracted');
+
+  // Page selection state
+  pageSelectionMode = signal<'all' | 'range' | 'specific'>('all');
+  startPage = signal<number | null>(null);
+  endPage = signal<number | null>(null);
+  specificPages = signal('');
+
+  // Specific Extract Modal
+  showExtractPagesModal = signal(false);
+  extractPagesJob = signal<OcrJob | null>(null);
+
+  // Filters setup
+  searchQuery = signal<string>('');
+  startDateFilter = signal<Date | null>(null);
+  endDateFilter = signal<Date | null>(null);
+
+  // --- Download Selection State ---
+  showDownloadFormatModal = signal(false);
+  pendingDownloadFormat = signal<'txt' | 'docx' | null>(null);
+  pendingDownloadJob = signal<OcrJob | null>(null);
+
+  // Computed: whether any filters are active
+  readonly hasActiveFilters = computed(() => {
+    return !!this.searchQuery() || !!this.startDateFilter() || !!this.endDateFilter();
+  });
+
+  // Content editing state
+  showEditModal = signal(false);
+  editingJob = signal<OcrJob | null>(null);
+  editingContent = signal('');
+  // editingFormat = signal<ContentFormat>('HTML'); // Removed
+
+  // AI state
+  showSummaryModal = signal(false);
+  summaryType = signal<SummaryType>('SHORT');
+  summaryJob = signal<OcrJob | null>(null);
+  showClassifyModal = signal(false);
+  classifyJob = signal<OcrJob | null>(null);
+
+  // From state service
+  readonly jobs = this.ocrState.jobs;
+  readonly filteredJobs = this.ocrState.filteredJobs;
+  readonly selectedJob = this.ocrState.selectedJob;
+  readonly stats = this.ocrState.stats;
+  readonly isLoading = this.ocrState.isLoading;
+  readonly isProcessing = this.ocrState.isProcessing;
+  readonly uploadProgress = this.ocrState.uploadProgress;
+  readonly error = this.ocrState.error;
+  readonly successMessage = this.ocrState.successMessage;
+  readonly processingJobs = this.ocrState.processingJobs;
+  readonly completedJobs = this.ocrState.completedJobs;
+  readonly failedJobs = this.ocrState.failedJobs;
+  readonly pendingJobs = this.ocrState.pendingJobs;
+
+  // Pagination
+  readonly paginatedJobs = this.ocrState.paginatedJobs;
+  readonly currentPage = this.ocrState.currentPage;
+  readonly totalPages = this.ocrState.totalPages;
+  readonly pageNumbers = this.ocrState.pageNumbers;
+  readonly hasPreviousPage = this.ocrState.hasPreviousPage;
+  readonly hasNextPage = this.ocrState.hasNextPage;
+  readonly pageSize = this.ocrState.pageSize;
+  readonly pageSizeOptions = OcrStateService.PAGE_SIZE_OPTIONS;
+
+  ngOnInit(): void {
+    this.ocrState.loadJobs();
+  }
+
+  @HostListener('dragover', ['$event'])
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver.set(true);
+  }
+
+  @HostListener('dragleave', ['$event'])
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver.set(false);
+  }
+
+  @HostListener('drop', ['$event'])
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver.set(false);
+    const files = event.dataTransfer?.files;
+    if (files) {
+      this.handleFiles(Array.from(files));
+    }
+  }
+
+  onFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.handleFiles(Array.from(input.files));
+      input.value = '';
+    }
+  }
+
+  private handleFiles(files: File[]): void {
+    const validFiles = files.filter(file =>
+      file.type === 'application/pdf' ||
+      file.type.startsWith('image/') ||
+      file.type.includes('word')
+    );
+
+    if (validFiles.length > 0) {
+      this.selectedFiles.set(validFiles);
+      this.showUploadModal.set(true);
+    }
+  }
+
+  processFiles(): void {
+    const files = this.selectedFiles();
+    if (files.length > 0) {
+      this.ocrState.uploadAndExtract(files);
+      this.closeUploadModal();
+    }
+  }
+
+  closeUploadModal(): void {
+    this.showUploadModal.set(false);
+    this.selectedFiles.set([]);
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => files.filter((_, i) => i !== index));
+  }
+
+  // Tab management
+  setActiveTab(tab: 'all' | 'processing' | 'completed' | 'failed'): void {
+    this.activeTab.set(tab);
+    this.ocrState.resetPagination(); // Reset to page 1 when switching tabs
+
+    if (tab === 'all') {
+      this.ocrState.clearFilter();
+    } else {
+      const statusMap: Record<string, OcrStatus> = {
+        'processing': 'PROCESSING',
+        'completed': 'COMPLETED',
+        'failed': 'FAILED'
+      };
+      this.ocrState.updateFilter({ status: statusMap[tab] });
+    }
+  }
+
+  getTabJobs(): OcrJob[] {
+    // Use paginated jobs for display
+    return this.paginatedJobs();
+  }
+
+  // Filter actions
+  onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
+    this.ocrState.updateFilter({ searchQuery: value });
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
+    this.ocrState.updateFilter({ searchQuery: undefined });
+  }
+
+  clearAllFilters(): void {
+    this.searchQuery.set('');
+    this.startDateFilter.set(null);
+    this.endDateFilter.set(null);
+    this.ocrState.clearFilter();
+    // Re-apply tab filter if not on 'all'
+    const tab = this.activeTab();
+    if (tab !== 'all') {
+      const statusMap: Record<string, OcrStatus> = {
+        'processing': 'PROCESSING',
+        'completed': 'COMPLETED',
+        'failed': 'FAILED'
+      };
+      this.ocrState.updateFilter({ status: statusMap[tab] });
+    }
+  }
+
+  onStartDateFilter(dateStr: string | null): void {
+    const date = dateStr ? new Date(dateStr) : null;
+    this.startDateFilter.set(date);
+    this.ocrState.updateFilter({ dateFrom: date ? date.toISOString() : undefined });
+  }
+
+  onEndDateFilter(dateStr: string | null): void {
+    const date = dateStr ? new Date(dateStr) : null;
+    this.endDateFilter.set(date);
+    this.ocrState.updateFilter({ dateTo: date ? date.toISOString() : undefined });
+  }
+
+  // Pagination methods
+  goToPage(page: number | string): void {
+    if (typeof page === 'number') {
+      this.ocrState.setPage(page);
+    }
+  }
+
+  nextPage(): void {
+    this.ocrState.nextPage();
+  }
+
+  previousPage(): void {
+    this.ocrState.previousPage();
+  }
+
+  getStartIndex(): number {
+    const size = this.pageSize();
+    return (this.currentPage() - 1) * size + 1;
+  }
+
+  getEndIndex(): number {
+    const size = this.pageSize();
+    return Math.min(this.currentPage() * size, this.filteredJobs().length);
+  }
+
+  onPageSizeChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const size = parseInt(select.value, 10);
+    this.ocrState.setPageSize(size);
+  }
+
+  // Job actions
+  viewResult(job: OcrJob): void {
+    this.ocrState.selectJob(job);
+    this.ocrData.set(null);
+    this.ocrDataLoading.set(true);
+    this.ocrViewTab.set('extracted');
+    this.showResultModal.set(true);
+
+    // Load full OCR data from the API (includes aiSummary, documentType, aiTags, editedContent)
+    if (job.collectionId && job.documentId) {
+      this.ocrState.loadOcrData(job);
+      // Also load into our local ocrData signal for the new modal design
+      this.ocrState.getOcrDataObservable(job.collectionId, job.documentId).subscribe({
+        next: (data) => {
+          this.ocrData.set(data);
+          this.ocrDataLoading.set(false);
+        },
+        error: () => {
+          this.ocrDataLoading.set(false);
+        }
+      });
+    } else {
+      this.ocrDataLoading.set(false);
+    }
+  }
+
+  closeResultModal(): void {
+    this.showResultModal.set(false);
+    this.ocrState.selectJob(null);
+    this.ocrData.set(null);
+    this.ocrDataLoading.set(false);
+  }
+
+  setOcrViewTab(tab: 'extracted' | 'edited'): void {
+    this.ocrViewTab.set(tab);
+  }
+
+  getDocTypeIcon(docType: string | null | undefined): string {
+    if (!docType) return '📄';
+    const icons: Record<string, string> = {
+      'invoice': '🧾', 'receipt': '🧾', 'contract': '📑', 'letter': '✉️',
+      'id_document': '🪪', 'medical': '🏥', 'legal': '⚖️', 'academic': '🎓',
+      'report': '📊', 'form': '📋', 'other': '📄'
+    };
+    return icons[docType] || '📄';
+  }
+
+  getDocTypeLabel(docType: string | null | undefined): string {
+    if (!docType) return 'Unknown';
+    return docType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  retryJob(job: OcrJob): void {
+    this.ocrState.retryJob(job);
+  }
+
+  removeJob(job: OcrJob): void {
+    this.ocrState.removeJob(job.id);
+  }
+
+  initiateDownload(job: OcrJob, format: 'txt' | 'docx'): void {
+    if (job.editedContent) {
+      this.pendingDownloadFormat.set(format);
+      this.pendingDownloadJob.set(job);
+      this.showDownloadFormatModal.set(true);
+    } else {
+      if (format === 'txt') {
+        this.downloadText(job, 'original');
+      } else {
+        this.downloadDocx(job, 'original');
+      }
+    }
+  }
+
+  confirmDownload(type: 'original' | 'edited'): void {
+    const job = this.pendingDownloadJob();
+    const format = this.pendingDownloadFormat();
+
+    if (job && format) {
+      if (format === 'txt') {
+        this.downloadText(job, type);
+      } else {
+        this.downloadDocx(job, type);
+      }
+    }
+
+    this.closeDownloadFormatModal();
+  }
+
+  closeDownloadFormatModal(): void {
+    this.showDownloadFormatModal.set(false);
+    this.pendingDownloadFormat.set(null);
+    this.pendingDownloadJob.set(null);
+  }
+
+  downloadText(job: OcrJob, type: 'original' | 'edited' = 'original'): void {
+    this.ocrState.downloadText(job, type);
+  }
+
+  downloadDocx(job: OcrJob, type: 'original' | 'edited' = 'original'): void {
+    this.ocrState.downloadDocx(job, type);
+  }
+
+  copyText(text: string): void {
+    this.ocrState.copyToClipboard(text);
+  }
+
+  clearCompleted(): void {
+    this.ocrState.clearCompleted();
+  }
+
+  clearFailed(): void {
+    this.ocrState.clearFailed();
+  }
+
+  // Helpers
+  formatFileSize(bytes?: number): string {
+    if (!bytes) return '—';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  formatDate(dateString?: string): string {
+    if (!dateString) return '—';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getRelativeTime(dateString?: string): string {
+    if (!dateString) return '—';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return this.formatDate(dateString);
+  }
+
+  getStatusIcon(status: OcrStatus): string {
+    const s = status.toUpperCase();
+    switch (s) {
+      case 'COMPLETED':
+      case 'SUCCESS':
+        return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
+      case 'PROCESSING':
+        return 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15';
+      case 'FAILED':
+        return 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z';
+      case 'PENDING':
+        return 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z';
+      default:
+        return 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+    }
+  }
+
+  getStatusColor(status: OcrStatus): string {
+    const s = status.toUpperCase();
+    switch (s) {
+      case 'COMPLETED':
+      case 'SUCCESS':
+        return 'text-green-600 bg-green-100';
+      case 'PROCESSING':
+        return 'text-blue-600 bg-blue-100';
+      case 'FAILED':
+        return 'text-red-600 bg-red-100';
+      case 'PENDING':
+        return 'text-amber-600 bg-amber-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  }
+
+  getStatusLabel(status: OcrStatus): string {
+    const s = status.toUpperCase();
+    switch (s) {
+      case 'COMPLETED':
+      case 'SUCCESS':
+        return 'Completed';
+      case 'PROCESSING':
+        return 'Processing';
+      case 'FAILED':
+        return 'Failed';
+      case 'PENDING':
+        return 'Pending';
+      default:
+        return status;
+    }
+  }
+
+  isProcessingStatus(status: OcrStatus): boolean {
+    const s = status.toUpperCase();
+    return s === 'PROCESSING' || s === 'PENDING';
+  }
+
+  isCompletedStatus(status: OcrStatus): boolean {
+    const s = status.toUpperCase();
+    return s === 'COMPLETED' || s === 'SUCCESS';
+  }
+
+  isFailedStatus(status: OcrStatus): boolean {
+    return status.toUpperCase() === 'FAILED';
+  }
+
+  getConfidenceColor(confidence?: number): string {
+    if (!confidence) return 'text-gray-400';
+    if (confidence >= 0.9) return 'text-green-600';
+    if (confidence >= 0.7) return 'text-amber-600';
+    return 'text-red-600';
+  }
+
+  formatConfidence(confidence?: number): string {
+    if (!confidence) return '—';
+    return `${Math.round(confidence * 100)}%`;
+  }
+
+  getLanguageName(code?: string): string {
+    if (!code) return 'Unknown';
+    return SUPPORTED_LANGUAGES[code] || code.toUpperCase();
+  }
+
+  getFileIcon(mimeType?: string): string {
+    if (!mimeType) return 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z';
+    if (mimeType === 'application/pdf') return 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z';
+    if (mimeType.startsWith('image/')) return 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z';
+    return 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z';
+  }
+
+  getUsagePercentage(): number {
+    const s = this.stats();
+    if (!s || s.monthlyLimit === -1 || s.monthlyLimit === 0) return 0;
+    return Math.round(((s.monthlyLimit - s.pagesRemaining) / s.monthlyLimit) * 100);
+  }
+
+  // ==================== Page Selection ====================
+
+  /**
+   * Check if any selected file is a PDF
+   */
+  hasPdfFile(): boolean {
+    return this.selectedFiles().some(f => f.type === 'application/pdf');
+  }
+
+  setPageSelectionMode(mode: 'all' | 'range' | 'specific'): void {
+    this.pageSelectionMode.set(mode);
+    if (mode === 'all') {
+      this.startPage.set(null);
+      this.endPage.set(null);
+      this.specificPages.set('');
+    }
+  }
+
+  onStartPageChange(event: Event): void {
+    const val = (event.target as HTMLInputElement).valueAsNumber;
+    this.startPage.set(isNaN(val) ? null : val);
+  }
+
+  onEndPageChange(event: Event): void {
+    const val = (event.target as HTMLInputElement).valueAsNumber;
+    this.endPage.set(isNaN(val) ? null : val);
+  }
+
+  onSpecificPagesChange(event: Event): void {
+    this.specificPages.set((event.target as HTMLInputElement).value);
+  }
+
+  getPageSelectionOptions(): PageSelectionOptions | undefined {
+    const mode = this.pageSelectionMode();
+    if (mode === 'all') return undefined;
+
+    if (mode === 'range') {
+      const start = this.startPage();
+      const end = this.endPage();
+      if (start == null && end == null) return undefined;
+      return { startPage: start || undefined, endPage: end || undefined };
+    }
+
+    if (mode === 'specific') {
+      const pagesStr = this.specificPages().trim();
+      if (!pagesStr) return undefined;
+      const pages = pagesStr
+        .split(',')
+        .map(s => parseInt(s.trim(), 10))
+        .filter(n => !isNaN(n) && n > 0);
+      if (pages.length === 0) return undefined;
+      return { pages };
+    }
+
+    return undefined;
+  }
+
+  openExtractPagesModal(job: OcrJob): void {
+    this.extractPagesJob.set(job);
+    this.setPageSelectionMode('range'); // Start with range by default as we don't need 'all' here
+    this.showExtractPagesModal.set(true);
+  }
+
+  closeExtractPagesModal(): void {
+    this.showExtractPagesModal.set(false);
+    this.extractPagesJob.set(null);
+    this.setPageSelectionMode('all'); // Reset
+  }
+
+  submitExtractPages(): void {
+    const job = this.extractPagesJob();
+    if (!job || !job.collectionId || !job.documentId) return;
+
+    const options = this.getPageSelectionOptions();
+    if (options) {
+      this.ocrState.extractText(job.collectionId, job.documentId, job.fileName, options);
+      this.closeExtractPagesModal();
+    }
+  }
+
+  // ==================== AI Actions ====================
+
+  openSummaryModal(job: OcrJob): void {
+    this.summaryJob.set(job);
+    this.summaryType.set('SHORT');
+    this.aiState.clearSummaryResult();
+    this.showSummaryModal.set(true);
+  }
+
+  closeSummaryModal(): void {
+    this.showSummaryModal.set(false);
+    this.summaryJob.set(null);
+  }
+
+  summarizeDocument(): void {
+    const job = this.summaryJob();
+    if (!job) return;
+    this.aiState.summarize(job.documentId, this.summaryType());
+  }
+
+  onSummaryTypeChange(event: Event): void {
+    this.summaryType.set((event.target as HTMLSelectElement).value as SummaryType);
+  }
+
+  openClassifyModal(job: OcrJob): void {
+    this.classifyJob.set(job);
+    this.aiState.clearClassifyResult();
+    this.showClassifyModal.set(true);
+    // Immediately trigger classification
+    this.aiState.classify(job.documentId);
+  }
+
+  closeClassifyModal(): void {
+    this.showClassifyModal.set(false);
+    this.classifyJob.set(null);
+  }
+
+  // ==================== Content Editing ====================
+
+  openEditModal(job: OcrJob): void {
+    this.editingJob.set(job);
+    this.editingContent.set(job.editedContent || job.extractedText || '');
+    this.showEditModal.set(true);
+  }
+
+  closeEditModal(): void {
+    this.showEditModal.set(false);
+    this.editingJob.set(null);
+    this.editingContent.set('');
+  }
+
+  onEditingContentChange(event: Event | string): void {
+    const value = typeof event === 'string' ? event : (event.target as HTMLTextAreaElement).value;
+    this.editingContent.set(value);
+  }
+
+  saveEditedContent(): void {
+    const job = this.editingJob();
+    if (!job || !job.collectionId || !job.documentId) return;
+
+    const content = this.editingContent().trim();
+    if (!content) return;
+
+    this.ocrState.updateContent(
+      job.collectionId,
+      job.documentId,
+      content,
+      'HTML'
+    );
+    this.closeEditModal();
+  }
+
+  isPdf(job: OcrJob): boolean {
+    return job.mimeType === 'application/pdf';
+  }
+}
+

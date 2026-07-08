@@ -10,7 +10,7 @@ import {
   GoogleSignupResponse,
   GoogleAuthError,
   GoogleAuthErrorCodes
-} from '../models/google-auth.model';
+} from '@core/auth/models/google-auth.model';
 
 declare global {
   interface Window {

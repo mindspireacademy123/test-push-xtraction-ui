@@ -1,7 +1,7 @@
 import { Component, inject, signal, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { AuthService } from '@core/auth/services/auth.service';
 
 export interface ProfileDropdownUser {
   profilePicture?: string;

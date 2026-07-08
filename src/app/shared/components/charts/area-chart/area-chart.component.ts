@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild, ElementRef, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
-import {AreaChartData} from './data';
+import {AreaChartData} from '@shared/components/charts/area-chart/data';
 
 Chart.register(...registerables);
 

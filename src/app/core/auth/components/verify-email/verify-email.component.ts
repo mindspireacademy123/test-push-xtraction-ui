@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { EmailVerificationRequest, AuthError, AuthErrorCodes } from '../../models/auth.model';
+import { AuthService } from '@core/auth/services/auth.service';
+import { EmailVerificationRequest, AuthError, AuthErrorCodes } from '@core/auth/models/auth.model';
 
 interface EmailVerificationState {
   isLoading: boolean;

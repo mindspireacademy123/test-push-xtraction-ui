@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, signal } from '@angular/core';
 
-import { ButtonComponent } from '../button/button.component';
+import { ButtonComponent } from '@shared/ui/button/button.component';
 
 @Component({
   selector: 'app-password-generator',
